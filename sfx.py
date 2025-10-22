@@ -1,6 +1,7 @@
 from pygame import mixer
 from pygame.time import Clock
-mixer.init() 
+
+mixer.init()
 
 
 def play_sfx(sfx : str, wait : bool = False):
