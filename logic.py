@@ -1,4 +1,6 @@
-import time, os, sys
+from os import system, name
+from time import sleep
+from sys import stdout
 from msvcrt import kbhit, getch
 
 
@@ -6,8 +8,8 @@ from msvcrt import kbhit, getch
 
 #flushing
 def clear_screen():
-    os.system('cls' if os.name == 'nt' else 'clear')
-    sys.stdout.flush()
+    system('cls' if name == 'nt' else 'clear')
+    stdout.flush()
 
 #pausing
 def pause(msg: str = "\n[Press Enter to continue]"):
@@ -15,14 +17,18 @@ def pause(msg: str = "\n[Press Enter to continue]"):
 
 #wait
 def wait(sec):
-    time.sleep(sec)
+    sleep(sec)
 
-def start(func):
-    if __name__ == "__main__":
-        print("work")
-        func()
+#when start func
+def start(*functions):
+    for func in functions:
+        try:
+            func()
+        except Exception:
+            print("Error, this code will pass.")
+            pass
 
-
+#Display message
 def display(character: str, message: str, delay: float = 0.05, clear_after: bool = True):
     print(f"{character}: ")
     for i, ch in enumerate(message):
@@ -32,7 +38,7 @@ def display(character: str, message: str, delay: float = 0.05, clear_after: bool
                 print(message[i:], end="", flush=True)
                 break
         print(ch, end="", flush=True)
-        time.sleep(delay)
+        sleep(delay)
 
     print() 
     pause()
@@ -65,6 +71,7 @@ def two_options(character : str,
             print("Invalid input. Please enter 1 or 2.\n")
             pause()
             clear_screen()
+
 
 
 
