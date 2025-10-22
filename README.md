@@ -96,7 +96,7 @@ This structure is designed so that anyone can:
 ## 🧑‍💻 Author
 
 - **Name:** Do  
-- **GitHub:** [YourUsername](https://github.com/YourUsername)  
+- **GitHub:** [dothenry1607](https://github.com/dothenry1607)  
 - **Project:** DPG (Do Playing Game)
 
 ---
