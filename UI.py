@@ -1,10 +1,6 @@
 import logic, sfx, soundtrack, shop, item, inventory
+#This is where the game run
 
 
-
-
-shop.display_shop("Shop")
-item.add_shop("Ball", 199)
-shop.display_shop("Shop")
 
 
