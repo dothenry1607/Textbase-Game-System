@@ -1,5 +1,4 @@
-import item          
-import inventory    
+from DPG import item, inventory
 
 def display_shop(shop_name: str = "Shop"):
     print(f"------------- {shop_name} -------------")

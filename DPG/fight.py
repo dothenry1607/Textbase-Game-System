@@ -1,4 +1,4 @@
-import enemy, user, logic, exp
+from DPG import enemy, user, logic, exp
 
 
 def display():
@@ -10,17 +10,10 @@ def display():
 
         choice = input("Choose the enemy number to attack them: ").strip()
 
-        if not choice.isdigit():
-            print("Invalid input. Please enter a number.")
-            logic.pause() 
-            return
-
         idx = int(choice)
         if 1 <= idx <= len(enemy.enemy_list):
             it = enemy.enemy_list[idx - 1]
             it["health"] -= user.player["attack"]
-            print(f"You attacked {it['name']} for {user.player['attack']} damage!")
-            logic.pause()
             if it["health"] <= 0:
                 enemy.enemy_list.pop(idx - 1)
                 print(f"You defeated {it['name']}!")
@@ -32,19 +25,21 @@ def display():
                     print("All enemies defeated!")
                     logic.pause()
                     return
+
                 
             else:
                 print(f"You attacked {it['name']} for {user.player['attack']} damage!")
+            for i in enemy.enemy_list:
+                user.player["health"] -= i["attack"]
+                print(f"{i['name']} attacked you for {i['attack']} damage!")
+                logic.pause()
+                if user.player["health"] <= 0:
+                    print("You have been defeated!")
+                    logic.pause()
+                    return
         else:
             print("Invalid choice. Please try again.")
-        for i in enemy.enemy_list:
-            user.player["health"] -= i["attack"]
-            print(f"{i['name']} attacked you for {i['attack']} damage!")
-            logic.pause()
-            if user.player["health"] <= 0:
-                print("You have been defeated!")
-                logic.pause()
-                return
+
         logic.clear_screen()
 
 

@@ -1,0 +1,1 @@
+{"name": "Hero", "level": 2, "health": 45, "attack": 15, "exp": 80, "exp_to_level_up": 100, "inventory_list": [{"name": "Health Potion", "quantity": 3}], "enemy_list": []}

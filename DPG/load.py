@@ -1,4 +1,5 @@
-import user, exp, inventory, enemy, json
+from DPG import user, exp, inventory, enemy
+import json
 def load_game(username= f"{user.player['name']}_savefile.json"):
     try:
         with open(username, 'r') as f:
@@ -10,7 +11,7 @@ def load_game(username= f"{user.player['name']}_savefile.json"):
         user.player['attack'] = save_data.get("attack", user.player['attack'])
         exp.exp = save_data.get("exp", exp.exp)
         exp.exp_to_level_up = save_data.get("exp_to_level_up", exp.exp_to_level_up)
-        inventory.inventory = save_data.get("inventory", inventory.inventory)
+        inventory.inventory_list = save_data.get("inventory_list", inventory.inventory_list)
         enemy.enemy_list = save_data.get("enemy_list", enemy.enemy_list)
         
         print("Game loaded successfully.")

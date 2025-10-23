@@ -1,7 +1,7 @@
 from os import system, name
 from time import sleep
 from sys import stdout
-from msvcrt import kbhit, getch
+
 
 
 
@@ -31,12 +31,7 @@ def start(*functions):
 #Display message
 def display(character: str, message: str, delay: float = 0.05, clear_after: bool = True):
     print(f"{character}: ")
-    for i, ch in enumerate(message):
-        if kbhit():
-            key = getch()
-            if key == b'\r':  
-                print(message[i:], end="", flush=True)
-                break
+    for ch in (message):
         print(ch, end="", flush=True)
         sleep(delay)
 

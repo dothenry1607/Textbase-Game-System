@@ -1,4 +1,5 @@
-import user, exp, inventory, enemy, json
+from DPG import user, exp, inventory, enemy
+import json
 
 def save_game(username= f"{user.player['name']}_savefile.json"):
     save_data = {
@@ -8,7 +9,7 @@ def save_game(username= f"{user.player['name']}_savefile.json"):
         "attack" : user.player['attack'],
         "exp" : exp.exp,
         "exp_to_level_up" : exp.exp_to_level_up,
-        "inventory" : inventory.inventory,
+        "inventory_list" : inventory.inventory_list,
         "enemy_list" : enemy.enemy_list
     }
 

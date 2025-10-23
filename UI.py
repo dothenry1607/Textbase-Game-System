@@ -1,2 +1,6 @@
 import dpg 
-#you can add your code here
+
+
+dpg.load.load_game("None_savefile.json")    
+dpg.inventory.open_inventory()
+
