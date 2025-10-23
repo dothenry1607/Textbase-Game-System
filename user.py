@@ -7,3 +7,5 @@ def set_up(name : str, level : int = 1, health : int = 100, attack : int = 10):
     player["attack"] = attack
 
 
+def display_status():
+    print(f"Player: {player['name']}\n Level: {player['level']}\n Health: {player['health']}\n Attack: {player['attack']}")
