@@ -9,7 +9,7 @@ It provides a modular foundation (UI, items, inventory, shop, audio) so you can 
 - **Inventory:** dictionary-based items; easy to print/manage
 - **Items data:** simple in-code “database” (list/dicts) you can extend
 - **Audio:** BGM + SFX via `pygame.mixer`
-- **Modular:** import only what you need
+- **Modular:** import dpg
 
 ## Requirements
 - Python 3.10+
@@ -20,14 +20,22 @@ pip install pygame
 
 ## Project Structure (typical)
 ```
-📂 dpg/
-├── UI.py          # text UI helpers (display, pause, clear, simple menus)
+📂 dpg/           # if you are tester, don't touch this folder, open UI.py instead.
 ├── shop.py        # shop menu & purchase logic (numbered choices)
 ├── item.py        # item data & helpers (add/edit items)
 ├── inventory.py   # inventory storage & helpers (add/show items)
+├── fight.py       # fighting (display fighting)
+├── exp.py         # manipulate exp (initial exp, exp gain, etc.)
+├── level.py       # manipulate level (level up)
+├── enemy.py       # controlling the enemy (during the fight)
+├── user.py        # user data handling (name, attack, health, etc.)
+├── save.py        # save the game
+├── load.py        # load the game
 ├── sfx.py         # sound effects helpers
 ├── soundtrack.py  # background music helpers
 └── logic.py       # orchestration/entry points (e.g., start runner)
+UI.py              # this is where you put your code.
+
 ```
 
 ## Quick Start
