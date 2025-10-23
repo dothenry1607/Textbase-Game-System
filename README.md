@@ -34,30 +34,26 @@ pip install pygame
 
 ### 1) Import modules and display text
 ```python
-import UI
+import dpg
 
-UI.display("Narrator", "Welcome to your adventure...", 0.03, clear_after=False)
+dpg.logic.display("Narrator", "Welcome to your adventure...")
 ```
 
 ### 2) Add items and open a shop
 ```python
-import item
-import shop
-import inventory
 
 item.shop_items = [
     {"name": "Potion", "price": 25},
     {"name": "Sword",  "price": 150},
 ]
 
-shop.display_shop("General Store")
-inventory.open_inventory("Player1")
+dpg.shop.display_shop("General Store")
+dpg.inventory.open_inventory("Player1")
 ```
 
 ### 3) Play SFX and BGM
 ```python
-import sfx
-import soundtrack
+from DPG import sfx, soundtrack
 
 # soundtrack.play_bgm("assets/music/intro.mp3", loop=True, volume=0.6)
 # sfx.play("assets/sfx/confirm.wav", volume=0.8)
@@ -67,23 +63,23 @@ import soundtrack
 
 ## Usage Pattern
 ```python
-import UI, shop, inventory, item, soundtrack
+import dpg
 
 def intro():
-    UI.display("Guide", "A quiet wind… a choice awaits you.", 0.03)
+    dpg.logic.display("Guide", "A quiet wind… a choice awaits you.", 0.03)
 
 def open_store():
-    item.shop_items = [
+    dpg.item.shop_items = [
         {"name": "Potion", "price": 25},
         {"name": "Sword",  "price": 150},
     ]
-    shop.display_shop("Blacksmith")
-    inventory.open_inventory("Player1")
+    dpg.shop.display_shop("Blacksmith")
+    dpg.inventory.open_inventory("Player1")
 
 def main():
     intro()
     open_store()
-    UI.display("Narrator", "Thanks for trying DPG!", 0.02, clear_after=False)
+    dpg.logic.display("Narrator", "Thanks for trying DPG!", 0.02, clear_after=False)
 
 if __name__ == "__main__":
     main()
