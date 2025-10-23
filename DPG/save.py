@@ -1,7 +1,8 @@
 from DPG import user, exp, inventory, enemy
 import json
 
-def save_game(username= f"{user.player['name']}_savefile.json"):
+name = user.get_name()
+def save_game(username):
     save_data = {
         "name" : user.player['name'],
         "level" : user.player['level'],
@@ -13,6 +14,6 @@ def save_game(username= f"{user.player['name']}_savefile.json"):
         "enemy_list" : enemy.enemy_list
     }
 
-    with open(username, 'w') as f:
+    with open(f"{username}_savefile.json", 'w') as f:
         json.dump(save_data, f)
     print("Game saved successfully.")

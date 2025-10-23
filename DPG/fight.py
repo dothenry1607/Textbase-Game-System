@@ -3,10 +3,10 @@ from DPG import enemy, user, logic, exp
 
 def display():
     while True:
-        print(f"{user.player['name']} - health : {user.player['health']}")
+        print(f"{user.player['name']} - health : {user.player['health']}/{user.player['max_health']}")
         print("\nvs\n")
         for i, it in enumerate(enemy.enemy_list, 1):
-            print(f"[{i}] {it['name']} - {it['health']}")
+            print(f"[{i}] {it['name']} - {it['health']}/{it['max_health']} health")
 
         choice = input("Choose the enemy number to attack them: ").strip()
 

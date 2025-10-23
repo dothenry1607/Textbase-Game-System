@@ -1,4 +1,4 @@
-from DPG import user
+from DPG import user, heal
 inventory_list = []
 
 def open_inventory():
@@ -21,7 +21,13 @@ def open_inventory():
 
 
 def add_item(name: str, quantity: int = 1):
-    inventory_list.append({"name": name, "quantity": quantity})
+    if any(it for it in inventory_list if it["name"] == name):
+        for it in inventory_list:
+            if it["name"] == name:
+                it["quantity"] += quantity
+                return
+    else:
+        inventory_list.append({"name": name, "quantity": quantity})
 
 def remove_item(name: str):
     inventory_list.remove(next((it for it in inventory_list if it["name"] == name), None))
@@ -33,3 +39,9 @@ def use_item(id):
         id['quantity'] -= 1
     else:
         remove_item(id['name'])
+    item_effect(id)
+    
+    
+def item_effect(id):
+    if id['name'] == "Health Potion":
+        heal.heal_player(50)
