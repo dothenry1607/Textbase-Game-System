@@ -9,6 +9,9 @@ def display():
             print(f"[{i}] {it['name']} - {it['health']}/{it['max_health']} health")
 
         choice = input("Choose the enemy number to attack them: ").strip()
+        if not choice.isdigit():
+           print("Invalid input. Please enter a number.")
+           continue
 
         idx = int(choice)
         if 1 <= idx <= len(enemy.enemy_list):
