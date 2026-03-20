@@ -65,7 +65,10 @@ def display(character: str, message: str, delay: float = 0.02,
     ``character`` is shown as the speaker name.  If ``pause_after`` is
     ``False`` the function will not wait for user input (useful in tests).
     """
-    print(f"{character}: ")
+    if character == "":
+        print()
+    else:
+        print(f"{character}: ")
     for ch in message:
         print(ch, end="", flush=True)
         sleep(delay)

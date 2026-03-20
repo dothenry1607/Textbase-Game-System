@@ -1,268 +1,77 @@
-from dpg import *
-
-# track first-time events
-_has_visited_blacksmith = False
-_has_visited_tavern = False
-
-
-def intro():
-    logic.display("Narrator", "In the quiet village of Oakham, a young adventurer dreams of glory.", clear_after=True)
-
-
-def choose_name():
-    name = logic.get_input("What is your name, traveler?")
-    if not name:
-        name = "Adventurer"
-    # choose a class
-    cls_choices = list(user.CLASSES.keys())
-    idx = logic.options("Choose your class:", cls_choices)
-    picked = cls_choices[idx-1]
-    user.set_up(name, gold=50, pclass=picked)
-
-
-def visit_shop():
-    logic.display("Narrator", "You step into the Rusty Blade Shop, the bell above the door jingling.", clear_after=True)
-    shop.display_shop("Rusty Blade Shop")
-
-
-
-# pool of potential tavern jobs; tuples are (qid, monster, count, reward)
-_tavern_pool = [
-    ("gob1", "Goblin", 3, {"gold": 30}),
-    ("wolf1", "Wolf", 2, {"gold": 20}),
-]
-
-
-def visit_tavern():
-    """Show a job board and let the player accept or decline quests."""
-    global _has_visited_tavern
-    logic.display("Narrator", "You enter the smoky tavern; voices murmur over ale.", clear_after=True)
-    from DPG import quest
-    # ensure all jobs are registered so hints work
-    for qid, monster, count, reward in _tavern_pool:
-        # only register once
-        if qid not in quest.quests:
-            quest.register_guild_quest(qid, monster, count, reward)
-    # only show jobs that are not active and not already completed
-    available = [t for t in _tavern_pool if not any(aq.id == t[0] for aq in quest.get_active())]
-    if not available:
-        logic.display("Guild Master", "No jobs right now, come back later.", clear_after=True)
-        return
-    print("Job board:")
-    for idx, (qid, monster, count, reward) in enumerate(available, 1):
-        print(f"[{idx}] Hunt {count} {monster}(s) for {reward.get('gold',0)} gold")
-    print("[0] Leave tavern")
-    choice = logic.get_number_input("Choose a job number")
-    if choice == 0 or choice > len(available):
-        logic.display("Guild Master", "Maybe next time.", clear_after=True)
-        return
-    sel = available[choice-1]
-    if logic.yes_no_prompt(f"Accept job to hunt {sel[2]} {sel[1]}(s)?"):
-        quest.start_quest(sel[0])
-        logic.display("Guild Master", "Good luck out there!", clear_after=True)
-    else:
-        logic.display("Guild Master", "Suit yourself.", clear_after=True)
-
-
-def visit_blacksmith():
-    """Blacksmith location; may offer a mining quest initially."""
-    global _has_visited_blacksmith
-    logic.display("Blacksmith", "The forge roars as the smith hammers away.", clear_after=True)
-    if not _has_visited_blacksmith:
-        _has_visited_blacksmith = True
-        from DPG import quest
-        quest.register_quest(quest.Quest("mine1", "Bring me 2 ore", ["have_Ore_2"], rewards={"gold":20}))
-        quest.start_quest("mine1")
-        logic.display("Blacksmith", "Hey there! Mine two ore from the caves and I'll pay you 20 gold.", clear_after=True)
-    # enchant as before
-    for entry in inventory.inventory_list:
-        if entry['name'] == "Sword":
-            it = item.get_item_by_name("Sword")
-            if it:
-                blacksmith.enchant(it, "Sharp", cost=20)
-                print("Your sword has been enchanted with Sharp!")
-            break
-
-
-
-def show_quests():
-    """Print active quests along with simple hints."""
-    from DPG import quest
-    active = quest.get_active()
-    if not active:
-        logic.display("Narrator", "You have no active quests.", clear_after=True)
-        return
-    print("Active quests:")
-    for q in active:
-        print(f"- {q.description}")
-        print("  Hint:", quest.get_hint(q.id))
-    logic.pause()
-
-
-def check_quests():
-    """Evaluate and complete any active quests and hand out rewards."""
-    from DPG import quest
-    for q in list(quest.get_active()):
-        if quest.complete_quest(q.id, []):
-            # grant whatever rewards are specified
-            for kind, amt in q.rewards.items():
-                if kind == "gold":
-                    user.add_gold(amt)
-                elif kind == "exp":
-                    exp.add_exp(amt)
-            logic.display("Narrator", f"Quest '{q.description}' completed!", clear_after=True)
-
-
-
-# chest demo is now unused; chest events occur randomly inside the dungeon
-
-def sleep():
-    """Player sleeps to restore health/mana and advance time to morning."""
-    logic.display("Narrator", "You curl up and sleep as the world turns.", clear_after=True)
-    user.regen()
-    logic.reset_time()
-    logic.display("Narrator", "You wake feeling refreshed.", clear_after=True)
-
-
-def gamble_demo():
-    from DPG import gamble
-    logic.display("Narrator", "A lurker in the corner beckons you with a crooked grin.", clear_after=True)
-    engage = logic.yes_no_prompt("A shady gambler offers you a 10‑gold bet.  Play?")
-    if not engage:
-        logic.display("Gambler", "Maybe next time.", clear_after=True)
-        return
-    logic.display("Gambler", "Care to try your luck?", clear_after=True)
-    g = gamble.gamble(10)
-    if g >= 0:
-        user.add_gold(g)
-        print(f"You won {g} gold!")
-    else:
-        print(f"You lost {-g} gold...")
-
-
-def embark_dungeon():
-    from DPG import dungeon, generator
-    logic.display("Narrator", "A dark maw yawns in the hillside, echoing with distant cries.", clear_after=True)
-    go = logic.yes_no_prompt("Do you wish to enter the dungeon to the north?")
-    if not go:
-        logic.display("Guide", "Perhaps another day.", clear_after=True)
-        return False
-    logic.display("Guide", "The dungeon lies to the north; prepare yourself.", clear_after=True)
-    d = dungeon.Dungeon(3)
-    while not d.is_complete():
-        # if we've already cleared at least one floor, ask whether to continue
-        if d.current > 0:
-            cont = logic.yes_no_prompt("Proceed deeper into the dungeon (no returns once you go)?")
-            if not cont:
-                logic.display("Narrator", "You head back to the surface.", clear_after=True)
-                return False
-        enemies = d.next_floor()
-        enemy.enemy_list[:] = enemies
-        print(f"Floor {d.current}:")
-        fight.display()
-        # after fight we might trigger a random event
-        import random
-        # chest spawn chance
-        if random.random() < 0.3:
-            from DPG import chest
-            logic.display("Narrator", "You notice a hidden treasure chest on the floor.", clear_after=True)
-            c = chest.create_chest("Dungeon Chest", [("Health Potion", 0.5), ("Ore", 0.3), ("Monster Claw", 0.2)])
-            loot = c.open()
-            if loot:
-                print("You found:", ", ".join(i.name for i in loot))
-                for i in loot:
-                    inventory.add_item(i.name)
-        # cave mining chance
-        if random.random() < 0.2:
-            logic.display("Narrator", "You discover a small cave with mineral veins.", clear_after=True)
-            if logic.yes_no_prompt("Mine for ore?"):
-                # grant random amount of ore
-                qty = random.randint(1, 3)
-                inventory.add_item("Ore", qty)
-                print(f"You mined {qty} ore.")
-        if user.player.health <= 0:
-            logic.display("Narrator", "You have fallen... game over.")
-            return False
-        logic.display("Narrator", "You survived the floor.", clear_after=True)
-        logic.advance_time()
-    # boss encounter
-    boss_enemy = boss.Boss("Ogre King", 150, 150, 25, 100, reward_gold=100, reward_items=["Sword"])
-    enemy.enemy_list[:] = [boss_enemy]
-    logic.display("Narrator", "A fearsome boss appears!", clear_after=True)
-    fight.display()
-    if user.player.health <= 0:
-        logic.display("Narrator", "The boss has defeated you.")
-        return False
-    user.add_gold(boss_enemy.reward_gold)
-    for it in boss_enemy.reward_items:
-        inventory.add_item(it)
-    logic.display("Narrator", f"You defeated {boss_enemy.name} and earned rewards!", clear_after=True)
-    return True
-
-
-
-def main():
-    intro()
-    choose_name()
-    # register basic items
-    item.register_item("Health Potion", price=5, effect=lambda it: heal.heal_player(30))
-    item.register_item("Sword", price=25)
-    # weapons for classes (may not be buyable but should exist)
-    item.register_item("Greatsword", price=100)
-    item.register_item("Staff", price=80)
-    item.register_item("Dagger", price=50)
-    # resource items
-    item.register_item("Ore", price=0)
-    item.register_item("Monster Claw", price=0)
-    # give starting weapon now that items exist
-    if user.player.weapon:
-        inventory.add_item(user.player.weapon)
-        print(f"You start with a {user.player.weapon}.")
-
-    # nothing to start; quests are awarded via locations/events
-
-    # main loop gives player options until they quit or die
-    while True:
-        # display time-of-day in prompt
-        current = logic.current_time()
-        choice = logic.options(
-            f"[{current.capitalize()}] What will you do?",
-            ["Visit shop", "Visit tavern", "Open inventory", "Gamble", "Enter dungeon",
-             "Visit blacksmith", "View quests", "Check status", "Sleep", "Quit"]
-        )
-        if choice == 1:
-            visit_shop()
-        elif choice == 2:
-            visit_tavern()
-        elif choice == 3:
-            inventory.open_inventory()
-        elif choice == 4:
-            gamble_demo()
-        elif choice == 5:
-            success = embark_dungeon()
-            if success:
-                visit_blacksmith()
-        elif choice == 6:
-            visit_blacksmith()
-        elif choice == 7:
-            show_quests()
-        elif choice == 8:
-            # display a brief recap of player stats
-            logic.display("Narrator", f"{user.player.name}: level {user.player.level}, gold {user.player.gold}", clear_after=True)
-        elif choice == 9:
-            sleep()
-        elif choice == 10:
-            break
-
-        # after every action we check whether quests can be completed
-        check_quests()
-        # also bail out if the player died during an action
-        if user.player.health <= 0:
-            break
-
-    logic.display("Narrator", "Your journey ends here for now...", clear_after=False)
-
-
-if __name__ == "__main__":
-    main()
- 
+import dpg
+import sys
+def game_over():
+    sys.exit()
+dpg.logic.display("???", "God is watching you.", delay= 0.1)
+dpg.logic.display("???", "Every choice has consequences.", delay= 0.1)
+dpg.logic.display("???", "Choose wisely.", delay= 0.1)
+dpg.logic.display("", "You wake up in a dark room, with no memory of how you got there.", delay= 0.02)
+while True:
+    option_1 = dpg.logic.options("What do you do?", ["Close your eyes", "Look around", "Stand up"])
+    if option_1 == 1:
+        dpg.logic.display("", "You close your eyes, trying to forget where you are. But the darkness is overwhelming, and you feel a sense of panic rising within you.", delay= 0.02)
+        dpg.logic.display("", "You decided to open your eyes again, as a way to tell the darkness that you are not defeated.")
+    elif option_1 == 2:
+        dpg.logic.display("", "You look around, but all you see is darkness. You can't make out any shapes or objects.", delay= 0.02)
+        dpg.logic.display("", "You feel a sense of hopelessness, as if you are trapped in this darkness forever.")
+    elif option_1 == 3:
+        dpg.logic.display("", "You stand up, trying to get a better sense of your surroundings. But the darkness is so thick that you can't see anything.", delay= 0.02)
+        dpg.logic.display("", "You feel a sense of determination, as if you are ready to face whatever challenges lie ahead.")
+        break 
+dpg.logic.display("", "You decided to walk forward, hoping to find a way out of the darkness. As you walk, you start to hear faint sounds in the distance, like whispers or footsteps.", delay= 0.02)
+dpg.logic.display("", "You can't tell where the sounds are coming from, but they seem to be getting louder. You feel a sense of unease, as if something is following you.", delay= 0.02)
+dpg.logic.display("", "You keep walking, trying to ignore the sounds. But they keep getting louder, until you can hear them clearly. You realize that they are coming from behind you.")
+dpg.logic.display("", "You sense an object that large enough that you could hide behind it.")
+while True:
+    option_2 = dpg.logic.options("What do you do?", ["Keep walking", "Turn around", "Hide"])
+    if option_2 == 1:
+        dpg.logic.display("", "You keep walking, trying to ignore the sounds. But they keep getting louder, until you can hear them clearly. You realize that they are coming from behind you.", delay= 0.02)
+        dpg.logic.display("", "You feel a sense of dread, as if something is about to attack you.")
+        dpg.logic.display("", "Suddenly, you feel a cold hand grab your shoulder, and you are pulled into the darkness. You scream, but no one can hear you.", delay= 0.02)
+        dpg.logic.display("", "You have been caught by the darkness, and you are trapped forever.")
+        game_over()
+    elif option_2 == 2:
+        dpg.logic.display("", "You turn around, and see a shadowy figure standing in the darkness. You can't make out any details, but you can feel its presence.", delay= 0.02)
+        dpg.logic.display("", "You feel a sense of fear, as if the figure is going to harm you.")
+        dpg.logic.display("", "The figure starts to move towards you, and you realize that you have to do something quickly.", delay= 0.02)
+        while True:
+            option_3 = dpg.logic.options("What do you do?", ["Run", "Fight", "Hide"])
+            if option_3 == 1:
+                dpg.logic.display("", "You try to run, but the darkness is so thick that you can't see where you're going. You stumble and fall, and the figure catches up to you.", delay= 0.02)
+                dpg.logic.display("", "You scream, but no one can hear you. You have been caught by the darkness, and you are trapped forever.")
+                game_over()
+            elif option_3 == 2:
+                dpg.logic.display("", "You try to fight the figure, but it's too strong. It easily overpowers you, and you are thrown to the ground.", delay= 0.02)
+                dpg.logic.display("", "You scream, but no one can hear you. You have been caught by the darkness, and you are trapped forever.")
+                game_over()
+            elif option_3 == 3:
+                dpg.logic.display("", "You hide behind a nearby object, trying to stay out of sight. The sounds get louder, and you can feel the figure getting closer.", delay= 0.02)
+                dpg.logic.display("", "You hold your breath, hoping that the figure won't find you.")
+                dpg.logic.display("", "The figure gets closer and closer, until it's right next to you. You can feel its breath on your skin, and you know that it can sense you.", delay= 0.02)
+                dpg.logic.display("", "It's too late, the figure already found you, it grabs you and pulls you into the darkness. You scream, but no one can hear you. You have been caught by the darkness, and you are trapped forever.")
+                game_over()
+    elif option_2 == 3:
+        dpg.logic.display("", "You hide behind the nearby object, trying to stay out of sight. The sounds get louder, and you can feel the figure getting closer.", delay= 0.02)
+        dpg.logic.display("", "You hold your breath, hoping that the figure won't find you.")
+        dpg.logic.display("", "The figure gets closer and closer, until it's right next to you. You can feel its breath on your skin, but it doesn't seem to notice you.", delay= 0.02)
+        dpg.logic.display("", "You wait until the figure moves away, and then you continue walking, hoping to find a way out of the darkness.", delay= 0.02)
+        break
+dpg.logic.display("", "Time past, you feel like enternity. You start to lose hope, but you keep walking, hoping to find a way out of the darkness. Suddenly, you see a faint light in the distance.", delay= 0.02)
+dpg.logic.display("", "You run towards the light, and as you get closer, you realize that it's a door. You open the door, and you see a bright light on the other side.", delay= 0.02)
+dpg.logic.display("", "You step through the door, and you find yourself in a beautiful garden. You can see flowers, trees, and a clear blue sky. You feel a sense of relief, as if you have finally escaped the darkness.", delay= 0.02)
+dpg.logic.display("", "You walk through the garden, then you notice a tea table. You sit down at the table, and you see a cup of tea in front of you. You take a sip, and you feel a sense of calm wash over you.", delay= 0.02)
+dpg.logic.display("", "Suddenly, you see a person walk out of some path in the garden. It's a girl, she looks at you and smiles. You feel a sense of familiarity, as if you have met her before.", delay= 0.02)
+dpg.logic.display("", "She walks towards you, and you can see that she has a kind face and gentle eyes. She sits down at the table with you.", delay= 0.02)
+dpg.logic.display("???", "2000 years ago, the great war of Dusk happened. Darkness surround the planet, The world was on the brink of destruction, and humanity was desperate for salvation.", delay= 0.1)
+dpg.logic.display("???", "People prayed to the gods for help, but their prayers went unanswered. In their desperation, they turned to a powerful sorcerer named Gadner, who promised to save them from the darkness.", delay= 0.1)
+dpg.logic.display("???", "Gadner is the son of the god of light, he has the power to control light, thing that can push back the destruction, but his power was not enough.", delay= 0.1)
+dpg.logic.display("???", "When god abandon us, lord Gadner decided to turn himself into a vessel for Valuga - The angel that fallen into hell.", delay= 0.1)
+dpg.logic.display("???", "Valuga was a powerful being, with the ability to control darkness and shadows. Gadner believed that by merging with Valuga, he could gain the power to save humanity from the darkness.", delay= 0.1)
+dpg.logic.display("???", "However, Valuga is known as the demon among the angels. Days and year in hell have turn him into a threatened creature. Gadner has no option but to turn his soul into the god box, where it trap the soul of Valuga, at the cost of Gadner himself.", delay = 0.1)
+dpg.logic.display("???","The god box was powerful enough that it clear out all of the darkness and bring back the Dawn to Paradia.", delay = 0.1)
+dpg.logic.display("???","However, the god box is also a prison for Valuga, and it is said that if the box is ever opened, Valuga will be released and bring darkness back to the world.", delay = 0.1)
+dpg.logic.display("???", "After 2000 years, the box that capture Valuga had losen and start to lost it power.", delay = 0.1)
+dpg.logic.display("???", "You however, are not from this world.", delay = 0.2)
+dpg.logic.display("???", "The room you were just in, is the summonning gate to the after life from another world.", delay = 0.1)
+dpg.logic.display("???", "The creature that you encounter in that hallway, was a test to see if you can handle against the darkness, against Valuga power.", delay= 0.1)
+dpg.logic.display("???", "You was summon here with a mission, to save Paradia from the awakening of Valuga.", delay = 0.1)
