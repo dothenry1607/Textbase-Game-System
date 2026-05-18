@@ -1,7 +1,7 @@
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),"..")))
 
-from DPG import logic
+from dpg import logic
 
 # simple helper to temporarily override builtins.input
 import builtins

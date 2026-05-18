@@ -1,4 +1,4 @@
-from DPG import user, exp, inventory, enemy
+from . import user, exp, inventory, enemy
 import json
 def load_game(username: str | None = None):
     if username is None:

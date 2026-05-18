@@ -65,7 +65,7 @@ This includes `pygame` as a dependency for audio features.
 Then import the module:
 
 ```python
-import DPG
+import dpg
 ```
 
 ## Quick Start
@@ -73,24 +73,24 @@ import DPG
 Create a simple script:
 
 ```python
-import DPG
+import dpg
 
 # display formatted text
-DPG.logic.display("Narrator", "Welcome to your adventure…")
+dpg.logic.display("Narrator", "Welcome to your adventure…")
 
 # configure the player
-from DPG import user
+from dpg import user
 user.set_up("Hero", gold=50)
 
 # register an item and open a shop
-from DPG import item
+from dpg import item
 item.register_item(
-    "Potion", price=10, effect=lambda it: DPG.heal.heal_player(20)
+    "Potion", price=10, effect=lambda it: dpg.heal.heal_player(20)
 )
-DPG.shop.display_shop("General Store")
+dpg.shop.display_shop("General Store")
 
 # simple event and quest example
-from DPG import events, quest
+from dpg import events, quest
 events.register_event(
     events.Event("Coin", "You found a coin!", lambda: user.add_gold(1), key="c")
 )
@@ -100,7 +100,7 @@ quest.register_quest(
 quest.start_quest("q1")
 
 # open inventory and use items
-DPG.inventory.open_inventory()
+dpg.inventory.open_inventory()
 
 # place this in a file and run: python mygame.py
 ```
@@ -111,25 +111,25 @@ Below is a high‑level map of the primary modules and their responsibilities.
 
 | Module              | Description |
 |---------------------|-------------|
-| `DPG.logic`         | Text helpers, menus, option prompts, `run_sequence`. |
-| `DPG.ui` (UI.py)    | Example game entry point / simple adventure. |
-| `DPG.user`          | `Player` dataclass, gold/health manipulation. |
-| `DPG.item`          | Registry and helpers for game items. |
-| `DPG.inventory`     | Player inventory management. |
-| `DPG.shop`          | Shop display and purchase logic. |
-| `DPG.exp`           | XP tracking and leveling (`Experience` class). |
-| `DPG.level`         | Level manipulation utilities. |
-| `DPG.enemy`         | `Enemy` dataclass and combat helpers. |
-| `DPG.boss`          | `Boss` subclass with extra rewards. |
-| `DPG.generator`     | Random enemy/encounter/dungeon generators. |
-| `DPG.dungeon`       | `Dungeon` class modelling multi‑floor areas. |
-| `DPG.events`        | Event registration and firing. |
-| `DPG.quest`         | Quest tracking and rewards. |
-| `DPG.chest`         | Chests with probability loot tables. |
-| `DPG.gamble`        | Simple gambling mechanic. |
-| `DPG.blacksmith`    | Item repair, enchant, rune systems. |
-| `DPG.save`, `DPG.load` | Serialization helpers for game state. |
-| `DPG.sfx`, `DPG.soundtrack` | Audio helpers (require pygame). |
+| `dpg.logic`         | Text helpers, menus, option prompts, `run_sequence`. |
+| `dpg.ui` (UI.py)    | Example game entry point / simple adventure. |
+| `dpg.user`          | `Player` dataclass, gold/health manipulation. |
+| `dpg.item`          | Registry and helpers for game items. |
+| `dpg.inventory`     | Player inventory management. |
+| `dpg.shop`          | Shop display and purchase logic. |
+| `dpg.exp`           | XP tracking and leveling (`Experience` class). |
+| `dpg.level`         | Level manipulation utilities. |
+| `dpg.enemy`         | `Enemy` dataclass and combat helpers. |
+| `dpg.boss`          | `Boss` subclass with extra rewards. |
+| `dpg.generator`     | Random enemy/encounter/dungeon generators. |
+| `dpg.dungeon`       | `Dungeon` class modelling multi‑floor areas. |
+| `dpg.events`        | Event registration and firing. |
+| `dpg.quest`         | Quest tracking and rewards. |
+| `dpg.chest`         | Chests with probability loot tables. |
+| `dpg.gamble`        | Simple gambling mechanic. |
+| `dpg.blacksmith`    | Item repair, enchant, rune systems. |
+| `dpg.save`, `dpg.load` | Serialization helpers for game state. |
+| `dpg.sfx`, `dpg.soundtrack` | Audio helpers (require pygame). |
 | ...                 | See modules under `DPG/` for more details. |
 
 Each module exposes functions and dataclasses; refer to the docstrings in the
@@ -140,7 +140,7 @@ source for full signatures.
 ### Experience & Leveling
 
 ```python
-from DPG import exp
+from dpg import exp
 exp.xp.add(50)            # gain XP, auto level‑ups
 print(exp.xp.current, exp.xp.to_level, exp.xp.percent)
 exp.xp.scale = 1.1        # customize progression
@@ -151,19 +151,19 @@ The old `add_exp` helper remains for compatibility.
 
 ### Currency & Shops
 
-Player state is encapsulated in `DPG.user.Player`.  Access via
-`DPG.user.player`.
+Player state is encapsulated in `dpg.user.Player`.  Access via
+`dpg.user.player`.
 
 ```python
-DPG.user.player.add_gold(100)
-DPG.user.player.spend_gold(25)
+dpg.user.player.add_gold(100)
+dpg.user.player.spend_gold(25)
 ```
 
 Shops automatically check balance and display the current gold amount.  You
 can customise shop inventories:
 
 ```python
-DPG.item.shop_items = [
+dpg.item.shop_items = [
     {"name": "Potion", "price": 25},
     {"name": "Sword",  "price": 150, "stock": 5, "rarity": "rare"},
 ]
@@ -172,7 +172,7 @@ DPG.item.shop_items = [
 ### Events & Quests
 
 ```python
-from DPG import events, quest
+from dpg import events, quest
 events.register_event(events.Event("Coin", "Found a coin!", callback, key="c"))
 quest.register_quest(quest.Quest(
     "q1","Find a coin",["found_coin"], rewards={"gold":5}
@@ -282,48 +282,48 @@ Do (Do Playing Game — DPG)
 require sufficient funds to purchase items.  Use ``user.add_gold`` and
 ``user.spend_gold`` to manipulate money.
 
-Items are defined in ``DPG.item`` using ``register_item``; each item may
+Items are defined in ``dpg.item`` using ``register_item``; each item may
 optionally specify an ``effect`` callable that runs when the item is consumed.
 
-Enemies are now modelled by the ``Enemy`` dataclass (`DPG.enemy.Enemy`),
+Enemies are now modelled by the ``Enemy`` dataclass (`dpg.enemy.Enemy`),
 which tracks health, attack and EXP.  Encounters manipulate a list of
 ``Enemy`` instances and the save system serialises them automatically.
 
-A simple procedural generator (`DPG.generator`) can produce random enemies
+A simple procedural generator (`dpg.generator`) can produce random enemies
 or populate an encounter with a specified number of foes.  Use
 ``generator.random_enemy()`` or ``generator.populate_encounter()`` to add
 variety to combat.
 
 ### Events & quests
 
-Register arbitrary game events with ``DPG.events.Event`` and fire them
-by key or randomly.  Quests (`DPG.quest`) track objectives and rewards;
+Register arbitrary game events with ``dpg.events.Event`` and fire them
+by key or randomly.  Quests (`dpg.quest`) track objectives and rewards;
 start them with ``start_quest`` and mark completion once goals are achieved.
 
 ### Chests & loot
 
-Use ``DPG.chest.Chest`` to create treasure chests with probabilistic loot
+Use ``dpg.chest.Chest`` to create treasure chests with probabilistic loot
 tables.  Opening a chest returns any items that dropped.  Recipes can
 include existing shop items.
 
 ### Gambling
 
-The ``DPG.gamble`` module offers a simple ``gamble(bet)`` helper that
+The ``dpg.gamble`` module offers a simple ``gamble(bet)`` helper that
 returns the net gain or loss based on a win chance and payout multiplier.
 
 ### Bosses
 
-Boss enemies extend ``DPG.enemy.Enemy`` via ``DPG.boss.Boss`` and can carry
+Boss enemies extend ``dpg.enemy.Enemy`` via ``dpg.boss.Boss`` and can carry
 additional rewards like gold or items when defeated.
 
 ### Dungeons
 
-``DPG.dungeon.Dungeon`` models a multi-floor dungeon, generating progressively
+``dpg.dungeon.Dungeon`` models a multi-floor dungeon, generating progressively
 stronger enemies with each floor.
 
 ### Blacksmith, enchantments & runes
 
-Visit the blacksmith (`DPG.blacksmith`) to repair items, apply enchantments,
+Visit the blacksmith (`dpg.blacksmith`) to repair items, apply enchantments,
 or socket runes (each action costs gold).  Enchantments and runes are
 stored on ``Item`` objects and can be checked by game logic for special
 effects.

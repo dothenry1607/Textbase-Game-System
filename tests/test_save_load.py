@@ -1,7 +1,7 @@
 import sys, os, json
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),"..")))
 
-from DPG import save, load, user, exp, inventory, enemy
+from dpg import save, load, user, exp, inventory, enemy
 
 
 def test_save_and_load(tmp_path, monkeypatch):

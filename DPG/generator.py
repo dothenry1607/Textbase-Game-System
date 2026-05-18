@@ -3,7 +3,7 @@
 from random import randint
 from typing import Optional
 
-from DPG import enemy
+from . import enemy
 
 
 def random_enemy(min_level: int = 1, max_level: int = 3) -> enemy.Enemy:

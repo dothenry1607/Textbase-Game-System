@@ -1,7 +1,7 @@
 """Blacksmith service for repairing and enchanting items."""
 
 from typing import Optional
-from DPG import user, item
+from . import user, item
 
 
 def repair(item_obj: item.Item, cost: int) -> bool:

@@ -2,7 +2,7 @@
 
 from typing import List
 
-from DPG import enemy, generator
+from . import enemy, generator
 
 
 class Dungeon:

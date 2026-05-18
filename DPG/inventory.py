@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from DPG import user, logic, item
+from . import user, logic, item
 
 # inventory_list is persisted in save files; each entry is a dict with keys
 # "name" and "quantity".  Using simple dicts keeps compatibility with

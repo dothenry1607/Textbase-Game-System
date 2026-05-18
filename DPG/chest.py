@@ -3,7 +3,7 @@
 from typing import List, Tuple
 import random
 
-from DPG import item
+from . import item
 
 
 class Chest:

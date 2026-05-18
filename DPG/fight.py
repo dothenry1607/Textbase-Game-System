@@ -1,4 +1,4 @@
-from DPG import enemy, user, logic, exp, inventory
+from . import enemy, user, logic, exp, inventory
 
 
 def display():

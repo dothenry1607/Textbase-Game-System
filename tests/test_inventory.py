@@ -1,7 +1,7 @@
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),"..")))
 
-from DPG import inventory, item, user
+from dpg import inventory, item, user
 
 
 def test_inventory_add_and_use():

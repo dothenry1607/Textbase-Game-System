@@ -1,4 +1,4 @@
-from DPG import item, inventory, user, logic
+from . import item, inventory, user, logic
 
 
 def display_shop(shop_name: str = "Shop"):

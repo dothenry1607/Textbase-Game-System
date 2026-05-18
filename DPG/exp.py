@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, asdict
 from typing import Callable, Optional
 
-from DPG import level
+from . import level
 
 
 @dataclass

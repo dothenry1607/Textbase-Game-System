@@ -31,6 +31,9 @@ classifiers = [
 Homepage = "https://github.com/dothenry1607/Textbase-Game-System"
 Repository = "https://github.com/dothenry1607/Textbase-Game-System"
 
+[tool.setuptools]
+py-modules = ["dpg"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["DPG"]

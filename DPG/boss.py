@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 from dataclasses import dataclass
-from DPG.enemy import Enemy
+from .enemy import Enemy
 
 
 @dataclass

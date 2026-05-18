@@ -1,4 +1,4 @@
-from DPG import user
+from . import user
 
 
 def level_up(times: int = 1) -> None:

@@ -21,7 +21,7 @@ class Quest:
         ``DPG.user``.  Other objectives are matched against the ``achieved``
         list provided by the caller.
         """
-        from DPG import user
+        from . import user
 
         for obj in self.objectives:
             if obj.startswith("kill_"):
@@ -45,7 +45,7 @@ class Quest:
                     except ValueError:
                         needed = 0
                     # count inventory occurrences
-                    from DPG import inventory
+                    from . import inventory
                     qty = sum(e['quantity'] for e in inventory.inventory_list if e['name'] == item_name)
                     if qty < needed:
                         return False

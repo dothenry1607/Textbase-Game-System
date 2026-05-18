@@ -3,7 +3,7 @@ import os
 # ensure repository root is on import path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),"..")))
 
-from DPG import exp, level
+from dpg import exp, level
 
 # simple helper to simulate level_up calls
 class DummyLevel:

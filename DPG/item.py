@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, asdict, field
 from typing import Callable, List, Optional
 
-from DPG import heal
+from . import heal
 
 
 @dataclass

@@ -1,7 +1,7 @@
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),"..")))
 
-from DPG import boss
+from dpg import boss
 
 
 def test_boss_creation():

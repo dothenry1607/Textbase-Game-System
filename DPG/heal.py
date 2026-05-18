@@ -1,4 +1,4 @@
-from DPG import user
+from . import user
 
 
 def heal_player(amount: int) -> int:

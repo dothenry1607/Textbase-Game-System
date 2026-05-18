@@ -1,7 +1,7 @@
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),"..")))
 
-from DPG import fight, enemy, user, inventory
+from dpg import fight, enemy, user, inventory
 
 # helper for input override
 import builtins
