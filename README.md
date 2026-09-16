@@ -60,6 +60,20 @@ Install with `pip`:
 pip install doplayinggame
 ```
 
+### Browser web interface
+
+Install the optional web dependencies and start the FastAPI server:
+
+```bash
+pip install -e ".[web]"
+dpg-web
+```
+
+Open <http://127.0.0.1:8000/> in a browser.  Each browser session receives
+its own isolated player, inventory, and encounter state.  The JSON API is
+available at `/api/status`, `/api/setup` (also `/api/new-game`),
+`/api/inventory`, and `/api/action`.
+
 This includes `pygame` as a dependency for audio features.
 
 Then import the module:
@@ -67,6 +81,17 @@ Then import the module:
 ```python
 import dpg
 ```
+
+### Desktop GUI
+
+For a local desktop window using Tkinter, run:
+
+```bash
+dpg-gui
+```
+
+The desktop client uses the same game-state model as the web API and does not
+require the optional web dependencies.
 
 ## Quick Start
 

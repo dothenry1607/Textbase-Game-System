@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DPG Adventure</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    <h1>DPG Adventure</h1>
+    <section aria-labelledby="status-heading">
+      <h2 id="status-heading">Status</h2>
+      <pre id="status" aria-live="polite">Loading…</pre>
+    </section>
+    <form id="setup">
+      <h2>New game</h2>
+      <label>Name <input name="name" required maxlength="80"></label>
+      <label>Class <select name="pclass"><option value="">Adventurer</option><option>Warrior</option><option>Mage</option><option>Rogue</option></select></label>
+      <button>Start game</button>
+    </form>
+    <section aria-labelledby="actions-heading">
+      <h2 id="actions-heading">Actions</h2>
+      <button data-action="attack">Attack</button>
+      <button data-action="rest">Rest</button>
+      <button data-action="use-item" data-item="Health Potion">Use health potion</button>
+      <p id="message" role="status"></p>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>
