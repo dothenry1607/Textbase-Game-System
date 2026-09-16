@@ -1,0 +1,9 @@
+:root { color-scheme: dark; font: 16px system-ui, sans-serif; }
+body { margin: 0; background: #101827; color: #e5e7eb; }
+main { max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+section, form { background: #1f2937; border-radius: .6rem; padding: 1rem; margin: 1rem 0; }
+label { display: block; margin: .6rem 0; }
+input, select, button { font: inherit; padding: .5rem; border-radius: .35rem; border: 1px solid #64748b; }
+button { cursor: pointer; margin: .25rem; background: #2563eb; color: white; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
+pre { white-space: pre-wrap; }
